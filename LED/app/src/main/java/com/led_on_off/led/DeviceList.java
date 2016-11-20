@@ -3,6 +3,7 @@ package com.led_on_off.led;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,10 @@ public class DeviceList extends ActionBarActivity
                 Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(turnBTon,1);
         }
+        else
+        {
+            pairedDevicesList();
+        }
 
         btnPaired.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +69,18 @@ public class DeviceList extends ActionBarActivity
                 pairedDevicesList();
             }
         });
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            Log.d("DeviceList", "Result: " + String.valueOf(resultCode) + ": " + data);
+            if (resultCode == RESULT_OK) {
+                pairedDevicesList();
+            }
+        }
     }
 
     private void pairedDevicesList()
