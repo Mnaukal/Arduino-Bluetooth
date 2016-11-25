@@ -2,6 +2,7 @@ package com.thetopfer.arduino_bluetooth;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,10 +21,10 @@ import java.io.IOException;
 import java.util.UUID;
 
 
-public class ledControl extends ActionBarActivity {
+public class ledControl extends AppCompatActivity {
 
     // Button btnOn, btnOff, btnDis;
-    ImageButton On, Off, Discnt, Abt;
+    ImageButton On, Off, Discnt, Abt, Drawer;
     SeekBar Rbar, Gbar, Bbar;
     String address = null;
     private ProgressDialog progress;
@@ -48,6 +49,7 @@ public class ledControl extends ActionBarActivity {
         Off = (ImageButton) findViewById(R.id.off);
         Discnt = (ImageButton) findViewById(R.id.discnt);
         Abt = (ImageButton) findViewById(R.id.abt);
+        Drawer = (ImageButton) findViewById(R.id.drawer);
         Rbar = (SeekBar) findViewById(R.id.seekBarR);
         Gbar = (SeekBar) findViewById(R.id.seekBarG);
         Bbar = (SeekBar) findViewById(R.id.seekBarB);
@@ -73,6 +75,14 @@ public class ledControl extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Disconnect(); //close connection
+            }
+        });
+
+        Drawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ledControl.this, MainActivity.class);
+                startActivity(i);
             }
         });
 
@@ -175,7 +185,8 @@ public class ledControl extends ActionBarActivity {
 
     public void about(View v) {
         if (v.getId() == R.id.abt) {
-            Intent i = new Intent(this, AboutActivity.class);
+            //Intent i = new Intent(this, AboutActivity.class);
+            Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }
     }
@@ -196,6 +207,8 @@ public class ledControl extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent i = new Intent(ledControl.this, MainActivity.class);
+            startActivity(i);
             return true;
         }
 
