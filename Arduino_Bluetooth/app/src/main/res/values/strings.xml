@@ -13,5 +13,5 @@
     <string name="rgbled">RGB LED</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="about_text">Developed by Michal Töpfer\n<a href="http://thetopfer.com">http://thetopfer.com</a>\n\nThis app is open source:\n<a href="https://github.com/Mnaukal/Arduino-Bluetooth">https://github.com/Mnaukal/Arduino-Bluetooth</a>\n\nbased on Arduino-Bluetooth-Basic by Mayoogh Girish\n<a href="https://github.com/Mayoogh/Arduino-Bluetooth-Basic">https://github.com/Mayoogh/Arduino-Bluetooth-Basic</a></string>
+    <string name="about_text">Developed by Michal Töpfer\n<a href="http://thetopfer.com">http://thetopfer.com</a>\n\nThis app is open source:\n<a href="https://github.com/Mnaukal/Arduino-Bluetooth">https://github.com/Mnaukal/Arduino-Bluetooth</a>\n\nbased on Arduino-Bluetooth-Basic by Mayoogh Girish\n<a href="https://github.com/Mayoogh/Arduino-Bluetooth-Basic">https://github.com/Mayoogh/Arduino-Bluetooth-Basic</a>\nand on android-arduino-bluetooth by Hayk Martirosyan\n<a href="https://github.com/hmartiro/android-arduino-bluetooth">https://github.com/hmartiro/android-arduino-bluetooth</a></string>
 </resources>

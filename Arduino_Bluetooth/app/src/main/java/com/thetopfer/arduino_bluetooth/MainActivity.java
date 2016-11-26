@@ -1,5 +1,6 @@
 package com.thetopfer.arduino_bluetooth;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -8,8 +9,11 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,11 +23,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thetopfer.arduino_bluetooth.Fragments.AboutFragment;
+import com.thetopfer.arduino_bluetooth.Fragments.BluetoothFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.OnOffFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.SettingsFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.rgbLedFragment;
@@ -36,6 +43,9 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView;
 
+    // Tag for logging
+    private static final String TAG = "MainActivity_Bluetooth";
+
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -45,6 +55,12 @@ public class MainActivity extends AppCompatActivity
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     int currentFragmentId = 0;
+
+    // The thread that does all the work
+    BluetoothThread btt;
+
+    // Handler for writing messages to the Bluetooth connection
+    Handler writeHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +73,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -74,8 +81,10 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        new ConnectBT().execute(); //Call the class to connect
+        //new ConnectBT().execute(); //Call the class to connect
+        ConnectBluetooth(); // Connect to bluetooth device specified in global address String
 
+        // set default fragment
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new OnOffFragment()).commit();
         navigationView.setCheckedItem(R.id.nav_onoff);
@@ -83,7 +92,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Bluetooth
-    public void Disconnect() {
+    /*public void Disconnect() {
         if (btSocket != null) //If the btSocket is busy
         {
             try {
@@ -93,35 +102,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         finish(); //return to the first layout
-    }
-
-    public void turnOffLed() {
-        if (btSocket != null) {
-            try {
-                btSocket.getOutputStream().write("0".toString().getBytes());
-            } catch (IOException e) {
-                msg("Error");
-            }
-        }
-    }
-    public void turnOnLed() {
-        if (btSocket != null) {
-            try {
-                btSocket.getOutputStream().write("1".toString().getBytes());
-            } catch (IOException e) {
-                msg("Error");
-            }
-        }
-    }
-    public void SendBTmessage(String message) {
-        if (btSocket != null) {
-            try {
-                btSocket.getOutputStream().write(message.toString().getBytes());
-            } catch (IOException e) {
-                msg("Error");
-            }
-        }
-    }
+    }*/
 
     private void msg(String s) { // fast way to call Toast
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
@@ -161,7 +142,8 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.action_disconnect) {
-            Disconnect();
+            //Disconnect();
+            DisconnectBluetooth();
             return true;
         }
 
@@ -193,46 +175,82 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    // Bluetooth Class
-    private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
+    //Bluetooth thread
+    public void ConnectBluetooth()
     {
-        private boolean ConnectSuccess = true; //if it's here, it's almost connected
+        Log.v(TAG, "Connect BT: " + address);
 
-        @Override
-        protected void onPreExecute() {
-            progress = ProgressDialog.show(MainActivity.this, "Connecting...", "Please wait!!!");  //show a progress dialog
+        // Only one thread at a time
+        if (btt != null) {
+            Log.w(TAG, "Already connected!");
+            return;
         }
 
-        @Override
-        protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
-        {
-            try {
-                if (btSocket == null || !isBtConnected) {
-                    myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
-                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
-                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
-                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    btSocket.connect();//start connection
+        // Initialize the Bluetooth thread, passing in a MAC address
+        // and a Handler that will receive incoming messages
+        btt = new BluetoothThread(address, new Handler() {
+            @Override
+            public void handleMessage(Message message) {
+                String s = (String) message.obj;
+                Log.d(TAG, s);
+
+                // Do something with the message
+                if (s.equals("CONNECTED")) {
+                    progress.dismiss();
+                    msg("Connected");
+                } else if (s.equals("DISCONNECTED")) {
+                    msg("Disconnected");
+                    finish();
+                } else if (s.equals("CONNECTION FAILED")) {
+                    btt = null;
+                    msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
+                    finish();
+                } else {
+                    Fragment frag = getFragmentManager().findFragmentById(R.id.content_frame);
+                    if(frag instanceof BluetoothFragment) {
+                        BluetoothFragment fragment = (BluetoothFragment) frag;
+                        fragment.ReceiveBluetoothMessage(s);
+                    }
                 }
-            } catch (IOException e) {
-                ConnectSuccess = false;//if the try failed, you can check the exception here
             }
-            return null;
+        });
+
+        // Get the handler that is used to send messages
+        writeHandler = btt.getWriteHandler();
+
+        // Run the thread
+        btt.start();
+
+        //TextView tv = (TextView) findViewById(R.id.statusText);
+        //tv.setText("Connecting...");
+        progress = ProgressDialog.show(MainActivity.this, "Connecting...", "Please wait!");  //show a progress dialog
+    }
+
+    public void DisconnectBluetooth() {
+        Log.v(TAG, "Disconnect BT.");
+
+        if(btt != null) {
+            btt.interrupt();
+            btt = null;
         }
+        finish(); //return to the first layout
+    }
 
-        @Override
-        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
-        {
-            super.onPostExecute(result);
+    public void SendBluetoothMessage(String message) {
+        Log.v(TAG, "Send BT Message: " + message);
 
-            if (!ConnectSuccess) {
-                msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
-                finish();
-            } else {
-                msg("Connected.");
-                isBtConnected = true;
-            }
-            progress.dismiss();
+        Message msg = Message.obtain();
+        msg.obj = message;
+        writeHandler.sendMessage(msg);
+    }
+
+    // Kill the thread when we leave the activity.
+    protected void onPause() {
+        super.onPause();
+
+        if(btt != null) {
+            btt.interrupt();
+            btt = null;
         }
     }
 }
