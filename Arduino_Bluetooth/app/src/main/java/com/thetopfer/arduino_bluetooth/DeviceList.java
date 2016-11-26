@@ -1,9 +1,12 @@
 package com.thetopfer.arduino_bluetooth;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +39,8 @@ public class DeviceList extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //Calling widgets
         btnPaired = (Button)findViewById(R.id.button);
@@ -119,7 +124,7 @@ public class DeviceList extends AppCompatActivity
             Intent i = new Intent(DeviceList.this, MainActivity.class);
 
             //Change the activity.
-            i.putExtra(EXTRA_ADDRESS, address); //this will be received at ledControl (-> MainActivty) (class) Activity
+            i.putExtra(EXTRA_ADDRESS, address); //this will be received at MainActivity (class) Activity
             startActivity(i);
         }
     };
@@ -141,9 +146,22 @@ public class DeviceList extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent i = new Intent(DeviceList.this, MainActivity.class);
-            startActivity(i);
+        if (id == R.id.action_help) {
+            new AlertDialog.Builder(DeviceList.this)
+                    .setTitle("Help")
+                    .setMessage("Pair your device in bluetooth settings and then hit REFRESH PAIRED DEVICES and choose the device you want to connect to.")
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setNegativeButton("Open Bluetooth settings", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent settingsIntent = new Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+                            startActivity(settingsIntent);
+                        }
+                    })
+                    .show();
             return true;
         }
 

@@ -4,10 +4,12 @@
     <group android:checkableBehavior="single" android:id="@+id/menu_group_top">
         <item android:id="@+id/nav_onoff" android:icon="@drawable/ic_power_settings_new_black_24dp"
             android:title="@string/onoff" />
-        <item android:id="@+id/nav_score" android:icon="@drawable/ic_equalizer_black_24dp"
+        <item android:id="@+id/nav_rgbled" android:icon="@drawable/led"
+            android:title="@string/rgbled" />
+        <!--<item android:id="@+id/nav_score" android:icon="@drawable/ic_equalizer_black_24dp"
             android:title="score" />
         <item android:id="@+id/nav_time" android:icon="@drawable/ic_timer_black_24dp"
-            android:title="time" />
+            android:title="time" />-->
     </group>
 
     <group android:checkableBehavior="single" android:id="@+id/menu_group_bot">

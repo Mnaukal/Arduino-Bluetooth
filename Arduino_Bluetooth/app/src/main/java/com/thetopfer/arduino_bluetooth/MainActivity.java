@@ -23,9 +23,10 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.thetopfer.arduino_bluetooth.Fragments.AboutFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.OnOffFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.SettingsFragment;
-import com.thetopfer.arduino_bluetooth.Fragments.ScoreFragment;
+import com.thetopfer.arduino_bluetooth.Fragments.rgbLedFragment;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity
     private boolean isBtConnected = false;
     //SPP UUID. Look for it
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+    int currentFragmentId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new OnOffFragment()).commit();
         navigationView.setCheckedItem(R.id.nav_onoff);
+        currentFragmentId = R.id.nav_onoff;
     }
 
     // Bluetooth
@@ -170,16 +174,19 @@ public class MainActivity extends AppCompatActivity
        FragmentManager fm = getFragmentManager();
         int id = item.getItemId();
 
-        if (id == R.id.nav_onoff) {
-            fm.beginTransaction().replace(R.id.content_frame, new OnOffFragment()).commit();
-        } else if (id == R.id.nav_score) {
-            fm.beginTransaction().replace(R.id.content_frame, new ScoreFragment()).commit();
-        } else if (id == R.id.nav_settings) {
-            fm.beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
-        } else if (id == R.id.nav_about) {
-            Intent i = new Intent(this, AboutActivity.class);
-            startActivity(i);
+        if(currentFragmentId != id) // don't replace with same fragment
+        {
+            if (id == R.id.nav_onoff) {
+                fm.beginTransaction().replace(R.id.content_frame, new OnOffFragment()).commit();
+            } else if (id == R.id.nav_rgbled) {
+                fm.beginTransaction().replace(R.id.content_frame, new rgbLedFragment()).commit();
+            } else if (id == R.id.nav_settings) {
+                fm.beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
+            } else if (id == R.id.nav_about) {
+                fm.beginTransaction().replace(R.id.content_frame, new AboutFragment()).commit();
+            }
         }
+        currentFragmentId = id;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

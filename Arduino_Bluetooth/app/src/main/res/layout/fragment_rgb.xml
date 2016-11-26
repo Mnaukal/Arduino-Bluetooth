@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/onoff"
+        android:text="@string/rgbled"
         android:gravity="center"
         android:id="@+id/textViewTitle"
         android:layout_alignParentTop="true"
@@ -22,43 +22,73 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <Switch
-        android:text=""
+
+    <TextView
+        android:text="Red"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/onoffswich"
-        android:scaleX="2"
-        android:scaleY="2"
+        android:id="@+id/textViewR"
         android:layout_below="@+id/textViewTitle"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="40dp"/>
 
-    <Button
+    <SeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/on"
-        android:text="ON"
-        android:layout_above="@+id/off"
-        android:layout_alignLeft="@+id/off"
-        android:layout_alignStart="@+id/off"
-        android:layout_marginBottom="10dp"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:theme="@style/AppTheme.Button_Primary"
-        android:layout_alignRight="@+id/off"
-        android:layout_alignEnd="@+id/off" />
+        android:id="@+id/seekBarR"
+        android:progress="0"
+        android:max="255"
+        android:layout_below="@+id/textViewR"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"/>
 
-    <Button
+    <TextView
+        android:text="Green"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:id="@+id/off"
-        android:text="OFF"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:theme="@style/AppTheme.Button_Accent"/>
+        android:id="@+id/textViewG"
+        android:layout_below="@+id/seekBarR"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="40dp" />
 
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarG"
+        android:max="255"
+        android:layout_below="@+id/textViewG"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewB"
+        android:layout_below="@+id/seekBarG"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="40dp" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarB"
+        android:max="255"
+        android:layout_below="@+id/textViewB"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <!--
     <ScrollView

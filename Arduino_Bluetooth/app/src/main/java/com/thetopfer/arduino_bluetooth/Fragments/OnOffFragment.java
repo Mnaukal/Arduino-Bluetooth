@@ -1,39 +1,23 @@
 package com.thetopfer.arduino_bluetooth.Fragments;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.Switch;
 
 import com.thetopfer.arduino_bluetooth.MainActivity;
 import com.thetopfer.arduino_bluetooth.R;
 
-import java.util.UUID;
-
 public class OnOffFragment extends Fragment {
 
-    // Button btnOn, btnOff, btnDis;
-    ImageButton On, Off, Discnt, Abt, Drawer;
-    SeekBar Rbar, Gbar, Bbar;
-    String address = null;
-    private ProgressDialog progress;
-    BluetoothAdapter myBluetooth = null;
-    BluetoothSocket btSocket = null;
-    private boolean isBtConnected = false;
-    //SPP UUID. Look for it
-    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
+    Button On, Off;
+    Switch OnOffSwitch;
     MainActivity mainActivity;
 
     @Nullable
@@ -43,17 +27,16 @@ public class OnOffFragment extends Fragment {
         mainActivity = ((MainActivity)getActivity());
 
         //call the widgets
-        On = (ImageButton) rootView.findViewById(R.id.on);
-        Off = (ImageButton) rootView.findViewById(R.id.off);
-        Rbar = (SeekBar) rootView.findViewById(R.id.seekBarR);
-        Gbar = (SeekBar) rootView.findViewById(R.id.seekBarG);
-        Bbar = (SeekBar) rootView.findViewById(R.id.seekBarB);
+        On = (Button) rootView.findViewById(R.id.on);
+        Off = (Button) rootView.findViewById(R.id.off);
+        OnOffSwitch = (Switch) rootView.findViewById(R.id.onoffswich);
 
         //commands to be sent to bluetooth
         On.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainActivity.turnOnLed();      //method to turn on
+                OnOffSwitch.setChecked(true);
             }
         });
 
@@ -61,54 +44,21 @@ public class OnOffFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mainActivity.turnOffLed();   //method to turn off
+                OnOffSwitch.setChecked(false);
             }
         });
 
-        Rbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        OnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mainActivity.SendBTmessage(progress + "R");
-            }
-        });
-
-        Gbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mainActivity.SendBTmessage(progress + "G");
-            }
-        });
-
-        Bbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mainActivity.SendBTmessage(progress + "B");
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                {
+                    mainActivity.turnOnLed();
+                }
+                else
+                {
+                    mainActivity.turnOffLed();
+                }
             }
         });
 
