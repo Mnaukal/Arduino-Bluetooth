@@ -23,4 +23,8 @@
         <item name="colorButtonNormal">@color/colorAccent</item>
         <item name="android:textColor">@color/foreground</item>
     </style>
+    <style name="EditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/foreground</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
 </resources>

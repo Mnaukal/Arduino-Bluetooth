@@ -33,6 +33,7 @@ import com.thetopfer.arduino_bluetooth.Fragments.AboutFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.BluetoothFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.OnOffFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.SettingsFragment;
+import com.thetopfer.arduino_bluetooth.Fragments.TerminalFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.rgbLedFragment;
 
 import java.io.IOException;
@@ -162,7 +163,9 @@ public class MainActivity extends AppCompatActivity
                 fm.beginTransaction().replace(R.id.content_frame, new OnOffFragment()).commit();
             } else if (id == R.id.nav_rgbled) {
                 fm.beginTransaction().replace(R.id.content_frame, new rgbLedFragment()).commit();
-            } else if (id == R.id.nav_settings) {
+            } else if (id == R.id.nav_terminal) {
+                fm.beginTransaction().replace(R.id.content_frame, new TerminalFragment()).commit();
+            }else if (id == R.id.nav_settings) {
                 fm.beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
             } else if (id == R.id.nav_about) {
                 fm.beginTransaction().replace(R.id.content_frame, new AboutFragment()).commit();
@@ -179,6 +182,7 @@ public class MainActivity extends AppCompatActivity
     public void ConnectBluetooth()
     {
         Log.v(TAG, "Connect BT: " + address);
+        progress = ProgressDialog.show(MainActivity.this, "Connecting...", "Please wait!");  //show a progress dialog
 
         // Only one thread at a time
         if (btt != null) {
@@ -220,10 +224,6 @@ public class MainActivity extends AppCompatActivity
 
         // Run the thread
         btt.start();
-
-        //TextView tv = (TextView) findViewById(R.id.statusText);
-        //tv.setText("Connecting...");
-        progress = ProgressDialog.show(MainActivity.this, "Connecting...", "Please wait!");  //show a progress dialog
     }
 
     public void DisconnectBluetooth() {
