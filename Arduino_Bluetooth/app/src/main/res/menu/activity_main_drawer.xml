@@ -6,6 +6,10 @@
             android:title="@string/onoff" />
         <item android:id="@+id/nav_rgbled" android:icon="@drawable/led"
             android:title="@string/rgbled" />
+        <item android:id="@+id/nav_arrows" android:icon="@drawable/ic_gamepad_black_24dp"
+            android:title="@string/arrows" />
+        <item android:id="@+id/nav_joystick" android:icon="@drawable/ic_videogame_asset_black_24dp"
+            android:title="@string/joystick" />
         <item android:id="@+id/nav_terminal" android:icon="@drawable/ic_question_answer_black_24dp"
             android:title="@string/terminal" />
         <!--<item android:id="@+id/nav_score" android:icon="@drawable/ic_equalizer_black_24dp"

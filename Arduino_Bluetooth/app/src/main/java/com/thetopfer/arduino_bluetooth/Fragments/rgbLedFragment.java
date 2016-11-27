@@ -1,6 +1,7 @@
 package com.thetopfer.arduino_bluetooth.Fragments;
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -17,8 +18,8 @@ public class rgbLedFragment extends Fragment implements BluetoothFragment {
     SeekBar Rbar, Gbar, Bbar;
     TextView Status;
     // used for sending less messages to Arduino from onProgressChanged on seekBars
-    int limitR = 0, limitG = 0, limitB = 0;
-    int LIMIT = 9;
+    long lastSentTime = 0;
+    int TIMEBETWEENSENDS = 100;
 
     MainActivity mainActivity;
 
@@ -27,6 +28,9 @@ public class rgbLedFragment extends Fragment implements BluetoothFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_rgb,container,false);
         mainActivity = ((MainActivity)getActivity());
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("settings", 0);
+        TIMEBETWEENSENDS = sharedPreferences.getInt("refresh_rate", 100);
 
         //call the widgets
         Rbar = (SeekBar) rootView.findViewById(R.id.seekBarR);
@@ -46,12 +50,11 @@ public class rgbLedFragment extends Fragment implements BluetoothFragment {
             }
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(limitR >= LIMIT) {
-                    limitR = 0;
+                long currentTime = System.currentTimeMillis();
+                if(currentTime - lastSentTime >= TIMEBETWEENSENDS) {
+                    lastSentTime = currentTime;
                     mainActivity.SendBluetoothMessage(progress + "R");
                 }
-                else
-                    limitR++;
             }
         });
 
@@ -66,12 +69,11 @@ public class rgbLedFragment extends Fragment implements BluetoothFragment {
             }
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(limitG >= LIMIT) {
-                    limitG = 0;
+                long currentTime = System.currentTimeMillis();
+                if(currentTime - lastSentTime >= TIMEBETWEENSENDS) {
+                    lastSentTime = currentTime;
                     mainActivity.SendBluetoothMessage(progress + "G");
                 }
-                else
-                    limitG++;
             }
         });
 
@@ -86,12 +88,11 @@ public class rgbLedFragment extends Fragment implements BluetoothFragment {
             }
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(limitB >= LIMIT) {
-                    limitB = 0;
+                long currentTime = System.currentTimeMillis();
+                if(currentTime - lastSentTime >= TIMEBETWEENSENDS) {
+                    lastSentTime = currentTime;
                     mainActivity.SendBluetoothMessage(progress + "B");
                 }
-                else
-                    limitB++;
             }
         });
 

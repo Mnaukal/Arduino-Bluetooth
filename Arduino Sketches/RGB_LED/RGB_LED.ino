@@ -47,6 +47,8 @@ void loop()
       a = (BT.read());
     else
       a = Serial.read();
+      
+    Serial.println((int)a);
     
     switch(a) { // swtich by the received character
       case '0'...'9':           // numbers -> store them in variable v

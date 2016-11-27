@@ -30,7 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thetopfer.arduino_bluetooth.Fragments.AboutFragment;
+import com.thetopfer.arduino_bluetooth.Fragments.ArrowsFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.BluetoothFragment;
+import com.thetopfer.arduino_bluetooth.Fragments.JoystickFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.OnOffFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.SettingsFragment;
 import com.thetopfer.arduino_bluetooth.Fragments.TerminalFragment;
@@ -163,6 +165,10 @@ public class MainActivity extends AppCompatActivity
                 fm.beginTransaction().replace(R.id.content_frame, new OnOffFragment()).commit();
             } else if (id == R.id.nav_rgbled) {
                 fm.beginTransaction().replace(R.id.content_frame, new rgbLedFragment()).commit();
+            } else if (id == R.id.nav_arrows) {
+                fm.beginTransaction().replace(R.id.content_frame, new ArrowsFragment()).commit();
+            }else if (id == R.id.nav_joystick) {
+                fm.beginTransaction().replace(R.id.content_frame, new JoystickFragment()).commit();
             } else if (id == R.id.nav_terminal) {
                 fm.beginTransaction().replace(R.id.content_frame, new TerminalFragment()).commit();
             }else if (id == R.id.nav_settings) {

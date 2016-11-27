@@ -3,6 +3,7 @@ package com.thetopfer.arduino_bluetooth;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -52,11 +53,17 @@ public class DeviceList extends AppCompatActivity
 
         if(myBluetooth == null)
         {
-            //Show a mensag. that the device has no bluetooth adapter
-            Toast.makeText(getApplicationContext(), "Bluetooth Device Not Available", Toast.LENGTH_LONG).show();
-
-            //finish apk
-            finish();
+            //Show a message that the device has no bluetooth adapter
+            new AlertDialog.Builder(DeviceList.this)
+                    .setTitle("Alert!")
+                    .setMessage("Bluetooth Device Not Available")
+                    .setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
         else if(!myBluetooth.isEnabled())
         {
@@ -66,7 +73,11 @@ public class DeviceList extends AppCompatActivity
         }
         else
         {
-            pairedDevicesList();
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    pairedDevicesList();
+                }
+            }, 100);
         }
 
         btnPaired.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +131,8 @@ public class DeviceList extends AppCompatActivity
             // Get the device MAC address, the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
+
+            Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_LONG).show();
 
             // Make an intent to start next activity.
             Intent i = new Intent(DeviceList.this, MainActivity.class);
